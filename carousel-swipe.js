@@ -52,7 +52,6 @@
 
     if ( this.cycling === null ) {
       this.cycling = !!this.carousel.interval
-      console.log( this.cycling )
       this.cycling && this.carousel.pause()
     }
 
