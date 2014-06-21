@@ -1,6 +1,6 @@
 {
   "name": "bootstrap-carousel-swipe",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Adding swipe behavior to Bootstrap's Carousel",
   "main": "carousel-swipe.js",
   "scripts": {
