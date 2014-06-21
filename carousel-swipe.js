@@ -8,68 +8,85 @@
   // CAROUSEL CLASS DEFINITION
   // =========================
 
-  var CarouselSwipe = function( element ) {
+  var CarouselSwipe = function(element) {
     this.$element    = $(element)
     this.carousel    = this.$element.data('bs.carousel')
     this.options     = $.extend({}, CarouselSwipe.DEFAULTS, this.carousel.options)
+    this.startX      =
+    this.startY      =
+    this.startTime   =
     this.$active     =
     this.$items      =
     this.$next       =
-    this.$prev       = null
+    this.$prev       = 
+    this.dx          = null
 
-    var that = this, start, touch, current, dx, percent, cycling;
-    this.$element.on('touchstart', function(ev) {
-      if (!that.options.swipe) return;
-      ev.preventDefault()
-      cycling = that.carousel.interval
-      cycling && that.carousel.pause() // pause to prevent cycling during swipe
-      touch = ev.originalEvent.targetTouches[0]
-      start = ev.timeStamp
-    })
-
-    this.$element.on('touchmove', function(ev) {
-      current = ev.originalEvent.targetTouches[0]
-      dx = -(touch.clientX - current.clientX)
-      percent = dx / that.$element.width() * 100
-      that.swipe(percent)
-    })
-
-    this.$element.on('touchend', function(ev) {
-      var all = $()
-        .add(that.$active).add(that.$prev).add(that.$next)
-        .carousel_transition(true)
-
-      var dt = (ev.timeStamp - start) / 1000;
-      var speed = Math.abs(percent / dt); // percent-per-second
-      if (percent > 40 || (percent > 0 && speed > that.options.swipe)) {
-        that.carousel.prev()
-      } else if (percent < -40 || (percent < 0 && speed > that.options.swipe)) {
-        that.carousel.next();
-      } else {
-        that.$active
-          .one($.support.transition.end, function () {
-            all.removeClass( "prev next" )
-          })
-        .emulateTransitionEnd(that.$active.css('transition-duration').slice(0, -1) * 1000)
-      }
-
-      all.css('left', '')
-      cycling && that.carousel.cycle()
-      cycling = null
-      that.$active = null // reset the active element
-    });
+    this.$element
+      .on('touchstart', $.proxy(this.touchstart,this))
+      .on('touchmove', $.proxy(this.touchmove,this))
+      .on('touchend', $.proxy(this.touchend,this))
   }
 
   CarouselSwipe.DEFAULTS = {
     swipe: 50 // percent per second
   }
 
-  CarouselSwipe.prototype.swipe = function( percent ) {
+  CarouselSwipe.prototype.touchstart = function(e) {
+    if (!this.options.swipe) return;
+    // pause to prevent cycling during swipe
+    // that.carousel.interval && that.carousel.pause()
+    var touch = e.originalEvent.touches ? e.originalEvent.touches[0] : e
+    this.dx = 0
+    this.startX = touch.pageX
+    this.startY = touch.pageY
+    this.width = this.$element.width()
+    this.startTime = e.timeStamp
+  }
+
+  CarouselSwipe.prototype.touchmove = function(e) {
+    if (!this.options.swipe) return;
+    var touch = e.originalEvent.touches ? e.originalEvent.touches[0] : e
+    var dx = touch.pageX - this.startX
+    var dy = touch.pageY - this.startY
+    if (Math.abs(dx) < Math.abs(dy)) return; // vertical scroll
+
+    e.preventDefault()
+    this.dx = dx / (this.width || 1) * 100
+    this.swipe(this.dx)
+  }
+
+  CarouselSwipe.prototype.touchend = function(e) {
+    if (!this.options.swipe) return;
+    var all = $()
+      .add(this.$active).add(this.$prev).add(this.$next)
+      .carousel_transition(true)
+
+    var dt = (e.timeStamp - this.startTime) / 1000
+    var speed = Math.abs(this.dx / dt) // percent-per-second
+    if (this.dx > 40 || (this.dx > 0 && speed > this.options.swipe)) {
+      this.carousel.prev()
+    } else if (this.dx < -40 || (this.dx < 0 && speed > this.options.swipe)) {
+      this.carousel.next();
+    } else {
+      this.$active
+        .one($.support.transition.end, function () {
+          all.removeClass('prev next')
+        })
+      .emulateTransitionEnd(this.$active.css('transition-duration').slice(0, -1) * 1000)
+    }
+
+    all.css('left', '')
+    // cycling && that.carousel.cycle()
+    // cycling = null
+    this.$active = null // reset the active element
+  }
+
+  CarouselSwipe.prototype.swipe = function(percent) {
     var $active = this.$active || this.getActive()
 
     if (percent < 0) {
         this.$prev
-            .css('left', '' )
+            .css('left', '')
             .removeClass('prev')
             .carousel_transition(true)
         if (!this.$next.length || this.$next.hasClass('active')) return
@@ -79,7 +96,7 @@
             .css('left', (percent + 100) + '%')
     } else {
         this.$next
-            .css('left', '' )
+            .css('left', '')
             .removeClass('next')
             .carousel_transition(true)
         if (!this.$prev.length || this.$prev.hasClass('active')) return
@@ -91,7 +108,7 @@
 
     $active
         .carousel_transition(false)
-        .css('left', percent + '%' )
+        .css('left', percent + '%')
   }
 
   CarouselSwipe.prototype.getActive = function() {
