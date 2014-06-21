@@ -1,0 +1,25 @@
+{
+  "name": "bootstrap-carousel-swipe",
+  "version": "0.0.1",
+  "homepage": "https://github.com/avinoamr/bootstrap-carousel-swipe",
+  "authors": [
+    "Roi Avinoam <avinoamr@gmail.com>"
+  ],
+  "description": "Adding swipe behavior to Bootstrap's Carousel",
+  "main": "carousel-swipe.js",
+  "keywords": [
+    "bootstrap",
+    "carousel",
+    "swipe",
+    "touch",
+    "mobile"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
