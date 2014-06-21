@@ -15,6 +15,7 @@
     this.startX      =
     this.startY      =
     this.startTime   =
+    this.cycling     =
     this.$active     =
     this.$items      =
     this.$next       =
@@ -33,12 +34,11 @@
 
   CarouselSwipe.prototype.touchstart = function(e) {
     if (!this.options.swipe) return;
-    // pause to prevent cycling during swipe
-    // that.carousel.interval && that.carousel.pause()
     var touch = e.originalEvent.touches ? e.originalEvent.touches[0] : e
     this.dx = 0
     this.startX = touch.pageX
     this.startY = touch.pageY
+    this.cycling = null
     this.width = this.$element.width()
     this.startTime = e.timeStamp
   }
@@ -49,6 +49,12 @@
     var dx = touch.pageX - this.startX
     var dy = touch.pageY - this.startY
     if (Math.abs(dx) < Math.abs(dy)) return; // vertical scroll
+
+    if ( this.cycling === null ) {
+      this.cycling = !!this.carousel.interval
+      console.log( this.cycling )
+      this.cycling && this.carousel.pause()
+    }
 
     e.preventDefault()
     this.dx = dx / (this.width || 1) * 100
@@ -76,14 +82,12 @@
     }
 
     all.css('left', '')
-    // cycling && that.carousel.cycle()
-    // cycling = null
+    this.cycling && this.carousel.cycle()
     this.$active = null // reset the active element
   }
 
   CarouselSwipe.prototype.swipe = function(percent) {
     var $active = this.$active || this.getActive()
-
     if (percent < 0) {
         this.$prev
             .css('left', '')
