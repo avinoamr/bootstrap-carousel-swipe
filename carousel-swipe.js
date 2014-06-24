@@ -62,6 +62,7 @@
 
   CarouselSwipe.prototype.touchend = function(e) {
     if (!this.options.swipe) return;
+    if (!this.$active) return; // nothing moved
     var all = $()
       .add(this.$active).add(this.$prev).add(this.$next)
       .carousel_transition(true)
