@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css">
+        <style type="text/css">
+        .carousel-inner .item {
+            color: white;
+            text-align: center;
+            font-size: 25px;
+            padding-top: 200px;
+            text-shadow: 1px 1px black;
+            height: 100%;
+        }
+        .carousel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .carousel .carousel-inner { height: 100% }
+        #i1 { background: red }
+        #i2 { background: green }
+        #i3 { background: blue }
+        </style>
+    </head>
+    <body>
+        <div class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div id="i1" class="item active">
+                    Swipe Carousel
+                </div>
+                <div id="i2" class="item"></div>
+                <div id="i3" class="item"></div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
+        <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+        <script type="text/javascript" src="carousel-swipe.js"></script>
+        <script type="text/javascript">
+        $( ".carousel" ).carousel({ interval: false });
+        </script>
+    </body>
+</html>
