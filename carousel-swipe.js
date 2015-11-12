@@ -19,7 +19,7 @@
     this.$active     =
     this.$items      =
     this.$next       =
-    this.$prev       = 
+    this.$prev       =
     this.dx          = null
 
     this.$element
@@ -81,7 +81,7 @@
       .emulateTransitionEnd(this.$active.css('transition-duration').slice(0, -1) * 1000)
     }
 
-    all.css('left', '')
+    all.css('transform', '')
     this.cycling && this.carousel.cycle()
     this.$active = null // reset the active element
   }
@@ -90,29 +90,29 @@
     var $active = this.$active || this.getActive()
     if (percent < 0) {
         this.$prev
-            .css('left', '')
+            .css('transform', 'translate3d(0,0,0)')
             .removeClass('prev')
             .carousel_transition(true)
         if (!this.$next.length || this.$next.hasClass('active')) return
         this.$next
             .carousel_transition(false)
             .addClass('next')
-            .css('left', (percent + 100) + '%')
+            .css('transform', 'translate3d(' + (percent + 100) + '%,0,0)')
     } else {
         this.$next
-            .css('left', '')
+            .css('transform', '')
             .removeClass('next')
             .carousel_transition(true)
         if (!this.$prev.length || this.$prev.hasClass('active')) return
         this.$prev
             .carousel_transition(false)
             .addClass('prev')
-            .css('left', (percent - 100) + '%')
+            .css('transform', 'translate3d(' + (percent - 100) + '%,0,0)')
     }
 
     $active
         .carousel_transition(false)
-        .css('left', percent + '%')
+        .css('transform', 'translate3d(' + percent + '%, 0, 0)')
   }
 
   CarouselSwipe.prototype.getActive = function() {
