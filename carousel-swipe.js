@@ -21,19 +21,30 @@
     this.$next       =
     this.$prev       =
     this.dx          = null
+    this.sliding     = false
 
     this.$element
-      .on('touchstart', $.proxy(this.touchstart,this))
-      .on('touchmove', $.proxy(this.touchmove,this))
-      .on('touchend', $.proxy(this.touchend,this))
+      .on('touchstart',        $.proxy(this.touchstart,this))
+      .on('touchmove',         $.proxy(this.touchmove,this))
+      .on('touchend',          $.proxy(this.touchend,this))
+      .on('slide.bs.carousel', $.proxy(this.sliding, this))
+      .on('slid.bs.carousel',  $.proxy(this.stopSliding, this))
   }
 
   CarouselSwipe.DEFAULTS = {
     swipe: 50 // percent per second
   }
 
+  CarouselSwipe.prototype.sliding = function() {
+    this.sliding = true
+  }
+
+  CarouselSwipe.prototype.stopSliding = function() {
+    this.sliding = false
+  }
+
   CarouselSwipe.prototype.touchstart = function(e) {
-    if (!this.options.swipe) return;
+    if (this.sliding || !this.options.swipe) return;
     var touch = e.originalEvent.touches ? e.originalEvent.touches[0] : e
     this.dx = 0
     this.startX = touch.pageX
@@ -44,7 +55,7 @@
   }
 
   CarouselSwipe.prototype.touchmove = function(e) {
-    if (!this.options.swipe) return;
+    if (this.sliding || !this.options.swipe) return;
     var touch = e.originalEvent.touches ? e.originalEvent.touches[0] : e
     var dx = touch.pageX - this.startX
     var dy = touch.pageY - this.startY
@@ -61,7 +72,7 @@
   }
 
   CarouselSwipe.prototype.touchend = function(e) {
-    if (!this.options.swipe) return;
+    if (this.sliding || !this.options.swipe) return;
     if (!this.$active) return; // nothing moved
     var all = $()
       .add(this.$active).add(this.$prev).add(this.$next)
